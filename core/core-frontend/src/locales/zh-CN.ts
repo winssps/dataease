@@ -993,6 +993,7 @@ export default {
     font_family: '字体',
     letter_space: '字间距',
     font_shadow: '字体阴影',
+    count_up: '数字滚动',
     chart_area: '面积图',
     fix: '固定值',
     dynamic: '动态值',

@@ -385,6 +385,17 @@ defineExpose({ getFormData })
         </el-checkbox>
       </el-form-item>
 
+      <el-form-item class="form-item" :class="'form-item-' + themes">
+        <el-checkbox
+          size="small"
+          :effect="themes"
+          v-model="state.indicatorValueForm.countUp"
+          @change="changeLabelTitleStyleStyle('countUp')"
+        >
+          {{ t('chart.count_up') }}
+        </el-checkbox>
+      </el-form-item>
+
       <el-divider class="m-divider" :class="{ 'divider-dark': themes === 'dark' }" />
 
       <el-form-item class="form-item" :class="'form-item-' + themes">

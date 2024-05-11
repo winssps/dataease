@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import { getData } from '@/api/chart'
-import { ref, reactive, shallowRef, computed, CSSProperties, toRefs, PropType } from 'vue'
+import {
+  ref,
+  reactive,
+  shallowRef,
+  computed,
+  CSSProperties,
+  toRefs,
+  PropType,
+  onUnmounted
+} from 'vue'
 import { dvMainStoreWithOut } from '@/store/modules/data-visualization/dvMain'
 import { customAttrTrans, customStyleTrans, recursionTransObj } from '@/utils/canvasStyle'
 import { deepCopy } from '@/utils/utils'
@@ -14,6 +23,7 @@ import {
 import { valueFormatter } from '@/views/chart/components/js/formatter'
 import { hexColorToRGBA } from '@/views/chart/components/js/util'
 import { storeToRefs } from 'pinia'
+import { CountUp } from 'countup.js'
 
 const props = defineProps({
   view: {
@@ -309,6 +319,15 @@ const renderChart = async view => {
 
       showSuffix.value = indicator.suffixEnable
       suffixContent.value = defaultTo(indicator.suffix, '')
+
+      console.log('renderChart')
+      if (indicator.countUp === true) {
+        initCountUp(0, result.value)
+        countUp.value?.update(result.value)
+        console.log(result.value)
+      } else {
+        //
+      }
     }
     if (indicatorName?.show) {
       let nameColor = indicatorName.color
@@ -366,6 +385,49 @@ const calcData = (view, callback) => {
   }
 }
 
+let elRef = ref<HTMLElement>()
+let countUp = ref<CountUp>()
+const finished = ref(false)
+
+function initCountUp(startValue = 0, endValue = 0) {
+  if (!elRef.value) {
+    console.warn('[countup]', `elRef can't found`)
+    return
+  }
+
+  if (countUp.value) {
+    return
+  }
+
+  finished.value = false
+  const startVal = isNaN(Number(startValue)) ? 0 : startValue
+  const endVal = isNaN(Number(endValue)) ? 0 : endValue
+  const duration = Number(2)
+
+  const countDecimalPlaces = (num: number) => {
+    const match = num.toString().match(/\.\d+/)
+    return match ? match[0].length - 1 : 0
+  }
+
+  const decimalPlaces = countDecimalPlaces(endVal)
+
+  // const formatterCfg = view.value.yAxis[0].formatterCfg
+
+  countUp.value = new CountUp(elRef.value, endVal, {
+    startVal,
+    duration,
+    decimalPlaces: decimalPlaces
+  })
+  if (countUp.value.error) {
+    console.error('[countup]', countUp.value.error)
+    return
+  }
+}
+
+onUnmounted(() => {
+  countUp.value?.reset()
+})
+
 defineExpose({
   calcData,
   renderChart
@@ -375,7 +437,7 @@ defineExpose({
 <template>
   <div :style="contentStyle">
     <div>
-      <span :style="indicatorClass">{{ formattedResult }}</span>
+      <span :style="indicatorClass" ref="elRef">{{ formattedResult }}</span>
       <span :style="indicatorSuffixClass" v-if="showSuffix">{{ suffixContent }}</span>
     </div>
     <div :style="indicatorNameWrapperStyle" v-if="indicatorNameShow">

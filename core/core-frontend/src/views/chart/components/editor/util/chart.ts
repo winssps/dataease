@@ -376,6 +376,7 @@ export const DEFAULT_INDICATOR_STYLE: ChartIndicatorStyle = {
   fontFamily: 'Microsoft YaHei',
   letterSpace: 0,
   fontShadow: false,
+  countUp: true,
 
   suffixEnable: true,
   suffix: '',
@@ -1197,20 +1198,6 @@ export const CHART_TYPE_CONFIGS = [
         category: 'compare',
         value: 'percentage-bar-stack-horizontal',
         title: t('chart.chart_percentage_bar_stack_horizontal'),
-        icon: 'percentage-bar-stack-horizontal'
-      },
-      {
-        render: 'antv',
-        category: 'compare',
-        value: 'bar-range',
-        title: t('chart.chart_bar_range'),
-        icon: 'bar-range'
-      },
-      {
-        render: 'antv',
-        category: 'compare',
-        value: 'bidirectional-bar',
-        title: t('chart.chart_bidirectional_bar'),
         icon: 'percentage-bar-stack-horizontal'
       }
     ]
